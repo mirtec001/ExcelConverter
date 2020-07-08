@@ -1,0 +1,16 @@
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\bin\Debug\AdminPanel.exe.config
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\bin\Debug\AdminPanel.exe
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\bin\Debug\AdminPanel.pdb
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\AdminPanel.csprojAssemblyReference.cache
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\MainWindow.g.cs
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\App.g.cs
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\AdminPanel_MarkupCompile.cache
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\AdminPanel_MarkupCompile.lref
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\MainWindow.baml
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\AdminPanel.g.resources
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\AdminPanel.Properties.Resources.resources
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\AdminPanel.csproj.GenerateResource.cache
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\AdminPanel.csproj.CoreCompileInputs.cache
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\AdminPanel.exe
+C:\Users\mirte\source\repos\AdminPanel\AdminPanel\obj\Debug\AdminPanel.pdb
