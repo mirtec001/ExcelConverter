@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Linq;
@@ -22,11 +23,15 @@ namespace AdminPanel.ViewModels
         private string _saveFilePath;
         private string _sheet_name;
         private int _currentProgress;
+        private string _statusMessage;
+        private int ticker = 0;
+        private decimal percentComplete;
+        private BackgroundWorker backgroundworker;
         public ICommand FormatReport_Click
         {
             get
             {
-                return new RelayCommand(FormatReport);
+                return new RelayCommand(RunApp);
             }
         }
         public ICommand OpenBrowse_Click
@@ -109,6 +114,27 @@ namespace AdminPanel.ViewModels
             }
         }
 
+        public string StatusMessage
+        {
+            get
+            {
+                return _statusMessage;
+            }
+            set
+            {
+                _statusMessage = value;
+                RaisePropertyChanged("StatusMessage");
+            }
+        }
+        public MainWindowViewModel()
+        {
+            backgroundworker = new BackgroundWorker();
+
+            backgroundworker.WorkerReportsProgress = true;
+            backgroundworker.WorkerSupportsCancellation = true;
+
+        }
+
         private void OpenBrowse()
         {
             // Open a xlsx
@@ -126,8 +152,34 @@ namespace AdminPanel.ViewModels
                 SaveFilePath = sfd.FileName;
         }
 
-        private void FormatReport()
+        private void RunApp()
         {
+            if (backgroundworker.IsBusy != true)
+            {
+                StatusMessage = "Converting document";
+                backgroundworker.DoWork += new DoWorkEventHandler(backgroundworker_DoWork);
+                backgroundworker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundwoker_RunWorkerCompleted);
+                backgroundworker.ProgressChanged += ProgressChanged;
+                backgroundworker.RunWorkerAsync();
+            }
+        }
+
+        private void backgroundwoker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                StatusMessage = "Error " + e.Error.Message;
+            }
+            else
+            {
+                StatusMessage = "Done"; 
+            }
+        }
+
+        private void backgroundworker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker localWorker = sender as BackgroundWorker;
+
             try
             {
                 app = new Microsoft.Office.Interop.Word.Application();
@@ -135,20 +187,24 @@ namespace AdminPanel.ViewModels
                 int writeup = 1;
                 System.Data.DataTable excelTable = LoadWorksheetInDataTable(OpenFilePath, SheetName);
                 int total_rows = excelTable.Rows.Count;
-                int ticker = 0;
+                
                 foreach (DataRow row in excelTable.Rows)
                 {
-                    writeup++;
                     var paragraph = doc.Paragraphs.Add();
-                    paragraph.Range.Text = "Writeup " + writeup.ToString() + " of " + excelTable.Rows.Count.ToString() + "------------------------------";
+                    paragraph.Range.Text = "Writeup " + writeup.ToString() + " of " + excelTable.Rows.Count.ToString() + "\n------------------------------";
                     foreach (DataColumn cols in excelTable.Columns)
                     {
                         string data = cols.ColumnName + ": " + row[cols];
-                        Console.WriteLine(data);
+                        // Console.WriteLine(data);
                         paragraph.Range.Text = paragraph.Range.Text + data;
                     }
+                    writeup++;
+                    ticker++;
+                    percentComplete = Decimal.Divide(ticker, total_rows);
+                    localWorker.ReportProgress(Convert.ToInt32(percentComplete * 100));
+                    Console.WriteLine(percentComplete * 100);
                     doc.Words.Last.InsertBreak(WdBreakType.wdPageBreak);
-                    CurrentProgress = Convert.ToInt32((total_rows / ticker) * 100);
+                    
                 }
 
                 foreach(Section wordSection in doc.Sections)
@@ -203,6 +259,11 @@ namespace AdminPanel.ViewModels
             {
                 return new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + fileName + "; Jet OLEDB:Engine Type=5;Extended Properties=\"Excel 8.0;\"");
             }
+        }
+
+        private void ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            CurrentProgress = e.ProgressPercentage;
         }
 
     }
